@@ -37,15 +37,15 @@ def call(Map config = [:]) {
             if [ -f "${manifestsPath}/10-ingress.yaml" ]; then
                 sed -i "s|host: .*|host: easyshop.letsdeployit.com|g" ${manifestsPath}/10-ingress.yaml
             fi
-            
+
+            git add ${manifestsPath}/*.yaml
+             
             # Check for changes
-            if git diff --quiet; then
+            if git diff --cached --quiet; then
                 echo "No changes to commit"
             else
                 # Commit and push changes
-                git add ${manifestsPath}/*.yaml
                 git commit -m "Update image tags to ${imageTag} and ensure correct domain [ci skip]"
-                
                 # Set up credentials for push
                 git remote set-url origin https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/Manthan0501/e-commerce-app.git
                 git push origin HEAD:\${GIT_BRANCH}
